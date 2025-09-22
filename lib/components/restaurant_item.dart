@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../model/menu_item.dart';
 
@@ -58,41 +57,43 @@ class RestaurantItem extends StatelessWidget {
 
             const SizedBox(width: 10),
 
-            // Ảnh + nút ADD chồng lên (có hiệu ứng mờ)
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
+            // Ảnh + nút ADD chồng lên
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Stack(
+                children: [
+                  Image.asset(
                     item.imageUrl,
                     width: 90,
                     height: 90,
                     fit: BoxFit.cover,
                   ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                      child: Container(
-                        color: Colors.grey.withOpacity(0.3), // nền trong mờ
-                        child: TextButton(
-                          onPressed: () {},
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                            foregroundColor: Colors.white,
-                            textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                  Positioned(
+                    bottom: 4,
+                    right: 4,
+                    child: SizedBox(
+                      height: 24, // 👈 chiều cao nút Add
+                      child: TextButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          minimumSize: Size.zero, // tránh padding thừa
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          "Add",
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                          child: const Text("Add"),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
