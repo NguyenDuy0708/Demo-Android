@@ -34,3 +34,4 @@ flutter:
     - assets/food/
     - assets/profile_pics/
     - assets/restaurants/
+    - assets/restaurants/menu_item/
