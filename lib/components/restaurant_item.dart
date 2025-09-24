@@ -21,7 +21,6 @@ class RestaurantItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Thông tin món ăn bên trái
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

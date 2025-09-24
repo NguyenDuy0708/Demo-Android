@@ -1,6 +1,11 @@
+import 'package:demo2/components/item_details.dart';
+import 'package:demo2/screens/checkout_page.dart';
 import 'package:flutter/material.dart';
+import '../model/menu_item.dart';
 import '../model/restaurant.dart';
 import '../components/restaurant_item.dart';
+import '../model/cart_manager.dart';
+import '../model/order_manager.dart';
 class RestaurantPage extends StatefulWidget {
   final Restaurant restaurant;
   const RestaurantPage({
@@ -13,16 +18,24 @@ class RestaurantPage extends StatefulWidget {
 }
 
 class _RestaurantPageState extends State<RestaurantPage> {
+  final CartManager cartManager = CartManager();
+  final OrderManager orderManager = OrderManager();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   static const desktopThreshold = 700;
 
   static const double largeScreenPercentage = 0.9;
   static const double maxWidth = 1000;
 
+  static const double drawerWidth = 375.0;
+
+  void openDrawer(){
+    scaffoldKey.currentState!.openEndDrawer();
+  }
   double calculateConstrainedWidth(double screenWidth) {
     return (screenWidth > desktopThreshold
         ? screenWidth * largeScreenPercentage : screenWidth).clamp(0.0, maxWidth);
   }
-  //TODO: Add Calculate Column Count
   int calculateColumnCount(double screenWidth) {
     return screenWidth > desktopThreshold ? 2 : 1;
   }
@@ -106,9 +119,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
   Widget _buildGridItem(int index) {
     final item = widget.restaurant.items[index];
     return InkWell(
-      onTap: (){
-        //Present Bottom Sheet in the future
-      },
+      onTap: () => _showBottomSheet(item),
       child: RestaurantItem(item: item),
     );
   }
@@ -125,6 +136,35 @@ class _RestaurantPageState extends State<RestaurantPage> {
       ),
     );
   }
+
+  Widget _buildEndDrawer(){
+    return SizedBox(
+      width: drawerWidth,
+
+      child: Drawer(
+        child: CheckoutPage(
+            cartManager: cartManager,
+            didUpdate :() {
+              setState(() {});
+            },
+            onSubmit: (order) {
+              orderManager.addOrder(order);
+              Navigator.popUntil(context, (route) => route.isFirst);
+            }
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFloatingActionButton(){
+    return FloatingActionButton.extended(
+        onPressed: openDrawer,
+        tooltip: 'Cart',
+        icon: const Icon(Icons.shopping_cart),
+        label: Text('${cartManager.items.length} Items in cart')
+    );
+  }
+
   GridView _buildGridView(int columnCount) {
     return GridView.builder(
       padding: const EdgeInsets.all(8.0),
@@ -155,19 +195,35 @@ class _RestaurantPageState extends State<RestaurantPage> {
       ),
     );
   }
+  void _showBottomSheet(MenuItem item) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      constraints: const BoxConstraints(maxWidth: 480),
+      builder: (context) => ItemDetails(
+        item: item,
+        cartManager: cartManager,
+        quantityUpdated: () {
+          setState(() {});
+        }
+      ),
+    );
+  }
 
-    //TODO: Replace build method
-    @override
+  @override
     Widget build(BuildContext context) {
       final screenWidth = MediaQuery.of(context).size.width;
       final constrainedWidth = calculateConstrainedWidth(screenWidth);
       return Scaffold(
+        key: scaffoldKey,
         body: Center(
           child: SizedBox(
             width: constrainedWidth,
             child: _buildCustomScrollView(),
           ),
         ),
+        endDrawer: _buildEndDrawer(),
+        floatingActionButton: _buildFloatingActionButton(),
       );
     }
   }

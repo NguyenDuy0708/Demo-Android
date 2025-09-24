@@ -68,7 +68,7 @@ class _RestaurantLandscapeCardState extends State<RestaurantLandscapeCard> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => RestaurantPage(restaurant: widget.restaurant))
+                      builder: (context) => RestaurantPage(restaurant: widget.restaurant,))
               );
             },
           )
